@@ -46,30 +46,30 @@
 #            echo "${{ secrets.ACENCORE_PEM_KEY }}" > acencore.pem
 #            chmod 400 acencore.pem
 #            ssh -o StrictHostKeyChecking=no -i acencore.pem "${{ secrets.EC2_USER }}"@"${{ secrets.EC2_HOST }}" "your_command_here"
-name: Deploy
+name: Node CI
 
-on:
-  push:
-    branches: [ main ]
+on: [push]
 
 jobs:
-  Deploy:
-    name: Deploy to EC2
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v2 
-      - name: Build & Deploy
-        env:
-            PRIVATE_KEY: ${{ secrets.ACENCORE_PEM_KEY }}
-            HOSTNAME: ${{secrets.EC2_HOST}}
-            USER_NAME: ${{secrets.EC2_USER}}
-      
-        run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+  build:
 
-              # Now we have got the access of EC2 and we will start the deploy .
-              cd /home/ubuntu/acencore-ml &&
-              git pull
-              '
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16.x'
+    - name: Install npm dependencies
+      run: npm install
+    - name: Run build task
+      run: npm run build --if-present
+    - name: Deploy to Server
+      uses: easingthemes/ssh-deploy@main
+      with:
+          SSH_PRIVATE_KEY: ${{ secrets.ACENCORE_PEM_KEY }}
+          ARGS: "-rlgoDzvc -i --delete"
+          SOURCE: "dist/"
+          REMOTE_HOST: ${{ secrets.EC2_HOST }}
+          REMOTE_USER: ${{ secrets.EC2_USER }}
