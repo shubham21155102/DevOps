@@ -1,30 +1,41 @@
-name: SSH in TO EC2
+name: SSH into EC2 Instance
+
 on:
-    push:
-        branches: [main]
+  push:
+    branches: [main]
+
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-           - name: Upgrade System
-             run: sudo apt-get update && sudo apt upgrade
-           - name: Add SSH key and known hosts
-             run: |
-                 mkdir -p ~/.ssh
-                 ssh-keyscan -H "${{secrets.EC2_HOST}}" >> ~/.ssh/known_hosts
-           - name: Add SSH key and known hosts
-             run: |
-               mkdir -p ~/.ssh
-               ssh-keyscan -H "${{secrets.EC2_HOST}}" >> ~/.ssh/known_hosts
-           - name: Get PEM Key
-             run: echo "${{secrets.ACENCORE_PEM_KEY}}"
-           - name: Write PEM key
-             run: echo "${{secrets.ACENCORE_PEM_KEY}}" >> acencore.pem
-           - name: Give Permissions to Acencore Pem file
-             run: chmod 400 acencore.pem
-           - name: Get All files
-             run: ls -a
-           - name: Get All files with Permissions
-             run: ls -l
-           - name: SSH in to server
-             run: ssh -i "acencore.pem" "${{secrets.EC2_USER}}"@"${{secrets.EC2_HOST}}"
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Upgrade System
+        run: |
+          sudo apt-get update
+          sudo apt-get upgrade -y
+
+      - name: Setup SSH and Known Hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "${{ secrets.EC2_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Write SSH Key to File
+        run: echo "${{ secrets.ACENCORE_PEM_KEY }}" > acencore.pem
+
+      - name: Restrict Permissions of SSH Key
+        run: chmod 400 acencore.pem
+
+      - name: Debugging Output List Files
+        run: |
+          ls -a
+          ls -l
+
+      - name: Add SSH Key to Agent
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: |
+            ${{ secrets.ACENCORE_PEM_KEY }}
+
+      - name: SSH into EC2 Instance and Execute Command
+        run: |
+          ssh -o StrictHostKeyChecking=no -i acencore.pem "${{ secrets.EC2_USER }}"@"${{ secrets.EC2_HOST }}" "your_command_here"
