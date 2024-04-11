@@ -38,4 +38,4 @@ jobs:
 
       - name: SSH into EC2 Instance and Execute Command
         run: |
-          ssh -o StrictHostKeyChecking=no -i acencore.pem "${{ secrets.EC2_USER }}"@"${{ secrets.EC2_HOST }}" "your_command_here"
+          ssh -o StrictHostKeyChecking=no -i acencore.pem "${{ secrets.EC2_USER }}"@"${{ secrets.EC2_HOST }}" "sudo rm -rf acencore-ml"
