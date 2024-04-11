@@ -21,4 +21,4 @@ jobs:
            - name: Write PEM key
              run: echo "${{secrets.ACENCORE_PEM_KEY}}" >> acencore.pem
            - name: SSH in to server
-             run: ssh -i "acencore.pem" "${{secrets.EC2_USER}}"@"${{secrets.EC2_HOST}}" -y
+             run: ssh -i "acencore.pem" "${{secrets.EC2_USER}}"@"${{secrets.EC2_HOST}}"
