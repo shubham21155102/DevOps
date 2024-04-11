@@ -1,49 +1,75 @@
-name: SSH into EC2 Instance
+# name: SSH into EC2 Instance
+
+# on:
+#   push:
+#     branches: [main]
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     #   - name: Upgrade System
+#     #     run: |
+#     #       sudo apt-get update
+#     #       sudo apt-get upgrade -y
+
+#       - name: Setup SSH and Known Hosts
+#         run: |
+#           mkdir -p ~/.ssh
+#           ssh-keyscan -H "${{ secrets.EC2_HOST }}" >> ~/.ssh/known_hosts
+
+#     #   - name: Write SSH Key to File
+#     #     run: echo "${{ secrets.ACENCORE_PEM_KEY }}" > acencore.pem
+
+#     #   - name: Restrict Permissions of SSH Key
+#     #     run: chmod 400 acencore.pem
+
+#       - name: Debugging Output List Files
+#         run: |
+#           ls -a
+#           ls -l
+
+#     #   - name: Add SSH Key to Agent
+#     #     uses: webfactory/ssh-agent@v0.5.3
+#     #     with:
+#     #       ssh-private-key: |
+#     #         ${{ secrets.ACENCORE_PEM_KEY }}
+#     #   - name: SSH into EC2 Instance and Execute Command
+#     #     run: |
+#     #       ssh -o StrictHostKeyChecking=no -i acencore.pem "${{ secrets.EC2_USER }}"@"${{ secrets.EC2_HOST }}" "sudo rm -rf acencore-ml"
+#     #   - name: SSH into EC2 Instance and Execute Command
+#     #     run: |
+#     #       ssh -o StrictHostKeyChecking=no -i <(echo "${{ secrets.ACENCORE_PEM_KEY }}") "${{ secrets.EC2_USER }}"@"${{ secrets.EC2_HOST }}" "sudo rm -rf acencore-ml"
+#       - name: SSH into EC2 Instance and Execute Command
+#         run: |
+#            echo "${{ secrets.ACENCORE_PEM_KEY }}" > acencore.pem
+#            chmod 400 acencore.pem
+#            ssh -o StrictHostKeyChecking=no -i acencore.pem "${{ secrets.EC2_USER }}"@"${{ secrets.EC2_HOST }}" "your_command_here"
+name: Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
-  deploy:
+  Deploy:
+    name: Deploy to EC2
     runs-on: ubuntu-latest
-
+    
     steps:
-    #   - name: Upgrade System
-    #     run: |
-    #       sudo apt-get update
-    #       sudo apt-get upgrade -y
-
-      - name: Setup SSH and Known Hosts
+      - uses: actions/checkout@v2 
+      - name: Build & Deploy
+        env:
+            PRIVATE_KEY: ${{ secrets.ACENCORE_PEM_KEY }}
+            HOSTNAME: ${{secrets.EC2_HOST}}
+            USER_NAME: ${{secrets.EC2_USER}}
+      
         run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H "${{ secrets.EC2_HOST }}" >> ~/.ssh/known_hosts
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
 
-    #   - name: Write SSH Key to File
-    #     run: echo "${{ secrets.ACENCORE_PEM_KEY }}" > acencore.pem
-
-    #   - name: Restrict Permissions of SSH Key
-    #     run: chmod 400 acencore.pem
-
-      - name: Debugging Output List Files
-        run: |
-          ls -a
-          ls -l
-
-    #   - name: Add SSH Key to Agent
-    #     uses: webfactory/ssh-agent@v0.5.3
-    #     with:
-    #       ssh-private-key: |
-    #         ${{ secrets.ACENCORE_PEM_KEY }}
-    #   - name: SSH into EC2 Instance and Execute Command
-    #     run: |
-    #       ssh -o StrictHostKeyChecking=no -i acencore.pem "${{ secrets.EC2_USER }}"@"${{ secrets.EC2_HOST }}" "sudo rm -rf acencore-ml"
-    #   - name: SSH into EC2 Instance and Execute Command
-    #     run: |
-    #       ssh -o StrictHostKeyChecking=no -i <(echo "${{ secrets.ACENCORE_PEM_KEY }}") "${{ secrets.EC2_USER }}"@"${{ secrets.EC2_HOST }}" "sudo rm -rf acencore-ml"
-      - name: SSH into EC2 Instance and Execute Command
-        run: |
-           echo "${{ secrets.ACENCORE_PEM_KEY }}" > acencore.pem
-           chmod 400 acencore.pem
-           ssh -o StrictHostKeyChecking=no -i acencore.pem "${{ secrets.EC2_USER }}"@"${{ secrets.EC2_HOST }}" "your_command_here"
-  
+              # Now we have got the access of EC2 and we will start the deploy .
+              cd /home/ubuntu/acencore-ml &&
+              git pull
+              '
