@@ -9,6 +9,6 @@ jobs:
         #    - name: Upgrade System
         #      run: sudo apt-get update && sudo apt upgrade
            - name: Get PEM Key
-             run: echo ${{secrets.GITHUB_TOKEN}}
-        #    - name: Write PEM key
-        #      run: 
+             run: echo "${{secrets.ACENCORE_PEM_KEY}}"
+           - name: Write PEM key
+             run: echo "${{secrets.ACENCORE_PEM_KEY}}" >> acencore.pem
