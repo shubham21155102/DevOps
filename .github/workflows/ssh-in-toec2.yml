@@ -6,5 +6,9 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-           - name: Upgrade System
-             run: sudo apt-get update && sudo apt upgrade
+        #    - name: Upgrade System
+        #      run: sudo apt-get update && sudo apt upgrade
+           - name: Get PEM Key
+             run: echo ${{secrets.ACENCORE_PEM_KEY}}
+        #    - name: Write PEM key
+        #      run: 
