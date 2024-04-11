@@ -1,0 +1,10 @@
+name: SSH in TO EC2
+on:
+    push:
+        branches: [main]
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+           - name: Upgrade System
+             run: sudo apt-get update && sudo apt upgrade
