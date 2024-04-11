@@ -30,11 +30,11 @@ jobs:
           ls -a
           ls -l
 
-      - name: Add SSH Key to Agent
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: |
-            ${{ secrets.ACENCORE_PEM_KEY }}
+    #   - name: Add SSH Key to Agent
+    #     uses: webfactory/ssh-agent@v0.5.3
+    #     with:
+    #       ssh-private-key: |
+    #         ${{ secrets.ACENCORE_PEM_KEY }}
     #   - name: SSH into EC2 Instance and Execute Command
     #     run: |
     #       ssh -o StrictHostKeyChecking=no -i acencore.pem "${{ secrets.EC2_USER }}"@"${{ secrets.EC2_HOST }}" "sudo rm -rf acencore-ml"
