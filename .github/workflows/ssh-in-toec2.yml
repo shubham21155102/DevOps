@@ -6,20 +6,20 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-        #    - name: Upgrade System
-        #      run: sudo apt-get update && sudo apt upgrade
-        #    - name: Add SSH key and known hosts
-        #      run: |
-        #          mkdir -p ~/.ssh
-        #          ssh-keyscan -H "${{secrets.EC2_HOST}}" >> ~/.ssh/known_hosts
-        #    - name: Add SSH key and known hosts
-        #      run: |
-        #        mkdir -p ~/.ssh
-        #        ssh-keyscan -H "${{secrets.EC2_HOST}}" >> ~/.ssh/known_hosts
-        #    - name: Get PEM Key
-        #      run: echo "${{secrets.ACENCORE_PEM_KEY}}"
-        #    - name: Write PEM key
-        #      run: echo "${{secrets.ACENCORE_PEM_KEY}}" >> acencore.pem
+           - name: Upgrade System
+             run: sudo apt-get update && sudo apt upgrade
+           - name: Add SSH key and known hosts
+             run: |
+                 mkdir -p ~/.ssh
+                 ssh-keyscan -H "${{secrets.EC2_HOST}}" >> ~/.ssh/known_hosts
+           - name: Add SSH key and known hosts
+             run: |
+               mkdir -p ~/.ssh
+               ssh-keyscan -H "${{secrets.EC2_HOST}}" >> ~/.ssh/known_hosts
+           - name: Get PEM Key
+             run: echo "${{secrets.ACENCORE_PEM_KEY}}"
+           - name: Write PEM key
+             run: echo "${{secrets.ACENCORE_PEM_KEY}}" >> acencore.pem
            - name: Give Permissions to Acencore Pem file
              run: chmod 400 acencore.pem
            - name: SSH in to server
