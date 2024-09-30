@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         run: |
           git clone https://${{secrets.GH_PAT}}@github.com/shubham21155102/DevOps.git
-          cd Amazon-ML
+          cd DevOps
 
       - name: Update diagram
         uses: githubocto/repo-visualizer@main
