@@ -16,12 +16,9 @@ jobs:
           cd DevOps
 
       - name: Update diagram
-        uses: githubocto/repo-visualizer@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          USERNAME: ${{ github.repository_owner }}
-        with:
-          excluded_paths: "ignore,.github"
+        run: |
+          cd DevOps
+          npx githubocto/repo-visualizer --token ${{ secrets.GITHUB_TOKEN }} --username ${{ github.repository_owner }} --excluded-paths "ignore,.github"
 
       - name: Commit changes
         run: |
