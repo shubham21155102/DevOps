@@ -4,12 +4,15 @@ on:
   push:
     branches:
       - main
+
 jobs:
   get_data:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
+
       - name: Update diagram
         uses: githubocto/repo-visualizer@main
         env:
@@ -17,3 +20,17 @@ jobs:
           USERNAME: ${{ github.repository_owner }}
         with:
           excluded_paths: "ignore,.github"
+
+      # Commit and push the diagram.svg file back to the repository
+      - name: Commit changes
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add diagram.svg
+          git commit -m "Repo visualizer: update diagram"
+
+      - name: Push changes
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }} # Personal Access Token
+        run: |
+          git push https://x-access-token:${GH_PAT}@github.com/${{ github.repository_owner }}/$(basename ${{ github.repository }}).git HEAD:main
