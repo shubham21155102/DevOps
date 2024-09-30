@@ -22,6 +22,7 @@ jobs:
           excluded_paths: "ignore,.github"
 
       # Commit and push the diagram.svg file back to the repository
+      
       - name: Commit changes
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
