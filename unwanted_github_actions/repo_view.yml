@@ -1,0 +1,21 @@
+# name: Repo Visualizer
+# on:
+#     push:
+#         branches: [main]
+# jobs:
+#     build:
+#         runs-on: ubuntu-latest
+#         steps:
+#             - name: Update diagram
+#               id: make_diagram
+#               uses: githubocto/repo-visualizer@0.7.1
+#               with:
+#                 output_file: "output-diagram.svg"
+#                 artifact_name: "my-diagram"
+                
+#             - name: Download a Build Artifact
+#               uses: actions/download-artifact@v4.1.8
+             
+#               with:
+#                   name: "my-diagram"
+#                   path: "downloads"
